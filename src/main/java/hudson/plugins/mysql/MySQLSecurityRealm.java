@@ -148,8 +148,8 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
                 md.reset();
                 byte[] passBytes = password.getBytes();
                 md.update(passBytes);
-                //String encryptedPassword = md.toString();
-                String encryptedPassword = password;
+                String encryptedPassword = md.toString();
+                //String encryptedPassword = password;
                 if (!storedPassword.equals(encryptedPassword))
                 {
                     LOGGER.warning("MySQLSecurity: Invalid Username or Password");
