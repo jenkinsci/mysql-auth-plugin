@@ -29,30 +29,30 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
     xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <f:entry title="${%Server}" help="/plugin/mysql-auth/help/server.html">
-        <f:textbox name="mysqlAuth.server" value="${instance.myServer}"/>
+        <f:textbox name="authenticator.myServer" value="${instance.myServer}"/>
     </f:entry>
     <f:entry title="${%Port}" help="/plugin/mysql-auth/help/port.html">
-        <f:textbox name="mysqlAuth.port" value="${instance.myPort}"/>
+        <f:textbox name="authenticator.myPort" value="${instance.myPort}"/>
     </f:entry>
     <f:entry title="${%Database}" help="/plugin/mysql-auth/help/database.html">
-        <f:textbox name="mysqlAuth.db" value="${instance.myDatabase}"/>
+        <f:textbox name="authenticator.myDatabase" value="${instance.myDatabase}"/>
     </f:entry>
     <f:entry title="${%Username}" help="/plugin/mysql-auth/help/username.html">
-        <f:textbox name="mysqlAuth.username" value="${instance.myUsername}"/>
+        <f:textbox name="authenticator.myUsername" value="${instance.myUsername}"/>
     </f:entry>
     <f:entry title="${%Password}" help="/plugin/mysql-auth/help/password.html">
-        <f:password name="mysqlAuth.password" value="${instance.myPassword}"/>
+        <f:password name="authenticator.myPassword" value="${instance.myPassword}"/>
     </f:entry>
     <f:entry title="${%UserTable}" help="/plugin/mysql-auth/help/table.html">
-        <f:textbox name="mysqlAuth.table" value="${instance.myDataTable}"/>
+        <f:textbox name="authenticator.myDataTable" value="${instance.myDataTable}"/>
     </f:entry>
     <f:entry title="${%UserField}" help="/plugin/mysql-auth/help/userField.html">
-        <f:textbox name="mysqlAuth.userField" value="${instance.myUserField}"/>
+        <f:textbox name="authenticator.myUserField" value="${instance.myUserField}"/>
     </f:entry>
     <f:entry title="${%PassField}" help="/plugin/mysql-auth/help/passField.html">
-        <f:textbox name="mysqlAuth.passField" value="${instance.myPassField}"/>
+        <f:textbox name="authenticator.myPassField" value="${instance.myPassField}"/>
     </f:entry>
     <f:entry title="${%Condition}" help="/plugin/mysql-auth/help/condition.html">
-        <f:textbox name="mysqlAuth.condition" value="${instance.myCondition}"/>
+        <f:textbox name="authenticator.myCondition" value="${instance.myCondition}"/>
     </f:entry>
 </j:jelly>

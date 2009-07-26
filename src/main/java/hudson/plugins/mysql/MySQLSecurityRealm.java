@@ -28,14 +28,12 @@
  */
 package hudson.plugins.mysql;
 
-import groovy.lang.Binding;
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.Descriptor;
 import hudson.security.AbstractPasswordBasedSecurityRealm;
 import hudson.security.GroupDetails;
 import hudson.security.SecurityRealm;
-import hudson.util.spring.BeanBuilder;
 import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -43,14 +41,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.logging.Logger;
 import org.acegisecurity.AuthenticationException;
-import org.acegisecurity.AuthenticationManager;
 import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.acegisecurity.providers.dao.AbstractUserDetailsAuthenticationProvider;
 import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.springframework.dao.DataAccessException;
-import org.springframework.web.context.WebApplicationContext;
 
 /**
  * Implementation of the AbstractPasswordBasedSecurityRealm that uses a MySQL
@@ -62,35 +58,22 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
 {
 
     @DataBoundConstructor
-    public MySQLSecurityRealm(String server, String username, String password,
-            String port, String database, String table, String userField,
-            String passField, String condition)
+    public MySQLSecurityRealm(String myServer, String myUsername, String myPassword,
+            String myPort, String myDatabase, String myDataTable, String myUserField,
+            String myPassField, String myCondition)
     {
-        myServer = Util.fixEmptyAndTrim(server);
-        myUsername = Util.fixEmptyAndTrim(username);
-        myPassword = Util.fixEmptyAndTrim(password);
-        port = Util.fixEmptyAndTrim(port);
-        if (port == null)
-            port = "3306";
-        myPort = port;
-        myDatabase = Util.fixEmptyAndTrim(database);
-        myCondition = Util.fixEmptyAndTrim(condition);
-        myDataTable = Util.fixEmptyAndTrim(table);
-        myUserField = Util.fixEmptyAndTrim(userField);
-        myPassField = Util.fixEmptyAndTrim(passField);
-    }
-
-    @Override
-    public SecurityComponents createSecurityComponents()
-    {
-        Binding binding = new Binding();
-        binding.setVariable("mysqlAuth", new Authenticator());
-        binding.setVariable("instance", this);
-        BeanBuilder builder = new BeanBuilder(getClass().getClassLoader());
-        builder.parse(getClass().getResourceAsStream("MySQL.groovy"), binding);
-        WebApplicationContext context = builder.createApplicationContext();
-        return new SecurityComponents(
-            findBean(AuthenticationManager.class, context), this);
+        this.myServer = Util.fixEmptyAndTrim(myServer);
+        this.myUsername = Util.fixEmptyAndTrim(myUsername);
+        this.myPassword = Util.fixEmptyAndTrim(myPassword);
+        this.myPort = Util.fixEmptyAndTrim(myPort);
+        if ((myPort == null) || (myPort.equals("")))
+            myPort = "3306";
+        this.myPort = myPort;
+        this.myDatabase = Util.fixEmptyAndTrim(myDatabase);
+        this.myCondition = Util.fixEmptyAndTrim(myCondition);
+        this.myDataTable = Util.fixEmptyAndTrim(myDataTable);
+        this.myUserField = Util.fixEmptyAndTrim(myUserField);
+        this.myPassField = Util.fixEmptyAndTrim(myPassField);
     }
 
     public static final class DescriptorImpl extends Descriptor<SecurityRealm>
@@ -132,7 +115,7 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
 
         connectionString = "jdbc:mysql://" + myServer + "/" +
                 myDatabase;
-        LOGGER.info("MySQLSecurity: Connection String - " + connectionString);
+        LOGGER.fine("MySQLSecurity: Connection String - " + connectionString);
         Connection conn = null;
         try
         {
@@ -143,14 +126,19 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
             LOGGER.info("MySQLSecurity: Connection established.");
 
             // Prepare the statement and query the user table
-            String userQuery = "SELECT * FROM ? WHERE ? = ?";
+            // TODO: Review userQuery to see if there's a better way to do this
+            String userQuery = "SELECT * FROM " + myDataTable + " WHERE " +
+                    myUserField + " = ?";
             PreparedStatement statement = conn.prepareStatement(userQuery);
-            // TODO: Find a way to get the info from the configuration page here
             statement.setString(1, myDataTable);
-            statement.setString(2, myUserField);
-            statement.setString(3, username);
+            LOGGER.fine("MySQLSecurity: Query Info - ");
+            LOGGER.fine("- Table: " + myDataTable);
+            LOGGER.fine("- User Field: " + myUserField);
+            LOGGER.fine("- Username: " + myUsername);
+            //statement.setString(2, myUserField);
+            statement.setString(1, username);
             ResultSet results = statement.executeQuery();
-            LOGGER.info("MySQLSecurity: Query executed.");
+            LOGGER.fine("MySQLSecurity: Query executed.");
 
             // Compare the provided password with the stored one
             if (results.first())
@@ -160,10 +148,11 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
                 md.reset();
                 byte[] passBytes = password.getBytes();
                 md.update(passBytes);
-                String encryptedPassword = md.toString();
+                //String encryptedPassword = md.toString();
+                String encryptedPassword = password;
                 if (!storedPassword.equals(encryptedPassword))
                 {
-                    LOGGER.info("MySQLSecurity: Invalid Username or Password");
+                    LOGGER.warning("MySQLSecurity: Invalid Username or Password");
                     throw new MySQLAuthenticationException("Invalid Username or Password");
                 }
                 else
@@ -175,7 +164,7 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
             }
             else
             {
-                LOGGER.info("MySQLSecurity: Invalid Username or Password");
+                LOGGER.warning("MySQLSecurity: Invalid Username or Password");
                 throw new MySQLAuthenticationException("Invalid Username or Password");
             }
 
@@ -191,7 +180,7 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
                 try
                 {
                     conn.close();
-                    LOGGER.info("MySQL Connection closed.");
+                    LOGGER.info("MySQLSecurity: Connection closed.");
                 }
                 catch (Exception ex)
                 {
@@ -214,7 +203,66 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException, DataAccessException
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        UserDetails user = null;
+        String connectionString;
+
+        connectionString = "jdbc:mysql://" + myServer + "/" +
+                myDatabase;
+        LOGGER.info("MySQLSecurity: Connection String - " + connectionString);
+        Connection conn = null;
+        try
+        {
+            // Connect to the database
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            conn = DriverManager.getConnection(connectionString,
+                    myUsername, myPassword);
+            LOGGER.info("MySQLSecurity: Connection established.");
+
+            // Prepare the statement and query the user table
+            // TODO: Review userQuery to see if there's a better way to do this
+            String userQuery = "SELECT * FROM " + myDataTable + " WHERE " +
+                    myUserField + " = ?";
+            PreparedStatement statement = conn.prepareStatement(userQuery);
+            //statement.setString(1, myDataTable);
+            //statement.setString(2, myUserField);
+            statement.setString(1, username);
+            ResultSet results = statement.executeQuery();
+            LOGGER.fine("MySQLSecurity: Query executed.");
+
+            // Grab the first result (should be only user returned)
+            if (results.first())
+            {
+                // Build the user detail
+                user = new MySQLUserDetail(username, "",
+                            true, true, true, true, null);
+            }
+            else
+            {
+                LOGGER.warning("MySQLSecurity: Invalid Username or Password");
+                throw new UsernameNotFoundException("MySQL: User not found");
+            }
+
+        }
+        catch (Exception e)
+        {
+            LOGGER.warning("MySQLSecurity Realm Error: " + e.getLocalizedMessage());
+        }
+        finally
+        {
+            if (conn != null)
+            {
+                try
+                {
+                    conn.close();
+                    LOGGER.info("MySQLSecurity: Connection closed.");
+                }
+                catch (Exception ex)
+                {
+                    /** Ignore any errors **/
+                }
+            }
+        }
+        return user;
     }
 
     /**
@@ -228,7 +276,7 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
     public GroupDetails loadGroupByGroupname(String groupname)
             throws UsernameNotFoundException, DataAccessException
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UsernameNotFoundException("Non-supported function");
     }
 
     class Authenticator extends AbstractUserDetailsAuthenticationProvider

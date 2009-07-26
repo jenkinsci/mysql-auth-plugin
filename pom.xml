@@ -4,13 +4,13 @@
   <groupId>org.jvnet.hudson.plugins</groupId>
   <artifactId>mysql-auth</artifactId>
   <packaging>hpi</packaging>
-  <version>0.9</version>
+  <version>0.9.1</version>
   <name>Hudson MySQL Plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/MySQL+Authentication+Plugin</url>
 
   <properties>
     <!-- which version of Hudson is this plugin built against? -->
-    <hudson.version>[1.317-SNAPSHOT,)</hudson.version>
+    <hudson.version>1.317</hudson.version>
   </properties>
 
   <dependencies>
