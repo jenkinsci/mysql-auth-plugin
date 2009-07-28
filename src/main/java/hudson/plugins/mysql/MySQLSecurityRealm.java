@@ -46,6 +46,7 @@ import org.acegisecurity.providers.dao.AbstractUserDetailsAuthenticationProvider
 import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.StaplerRequest;
 import org.springframework.dao.DataAccessException;
 
 /**
@@ -149,7 +150,6 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
                 byte[] passBytes = password.getBytes();
                 md.update(passBytes);
                 String encryptedPassword = md.toString();
-                //String encryptedPassword = password;
                 if (!storedPassword.equals(encryptedPassword))
                 {
                     LOGGER.warning("MySQLSecurity: Invalid Username or Password");
@@ -297,6 +297,51 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
                     authentication.getCredentials().toString());
         }
 
+    }
+
+    public String getMyServer()
+    {
+        return myServer;
+    }
+
+    public String getMyUsername()
+    {
+        return myUsername;
+    }
+
+    public String getMyPassword()
+    {
+        return myPassword;
+    }
+
+    public String getMyDatabase()
+    {
+        return myDatabase;
+    }
+
+    public String getMyDataTable()
+    {
+        return myDataTable;
+    }
+
+    public String getMyUserField()
+    {
+        return myUserField;
+    }
+
+    public String getMyPassField()
+    {
+        return myPassField;
+    }
+
+    public String getMyPort()
+    {
+        return myPort;
+    }
+    
+    public String getMyCondition()
+    {
+        return myCondition;
     }
 
     /**
