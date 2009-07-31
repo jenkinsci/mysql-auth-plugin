@@ -31,22 +31,24 @@ package hudson.plugins.mysql;
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.Descriptor;
+import hudson.plugins.mysql.crypt.JCrypt;
 import hudson.security.AbstractPasswordBasedSecurityRealm;
 import hudson.security.GroupDetails;
 import hudson.security.SecurityRealm;
-import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.acegisecurity.AuthenticationException;
+import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.acegisecurity.providers.dao.AbstractUserDetailsAuthenticationProvider;
 import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
 import org.springframework.dao.DataAccessException;
 
 /**
@@ -141,15 +143,18 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
             ResultSet results = statement.executeQuery();
             LOGGER.fine("MySQLSecurity: Query executed.");
 
-            // Compare the provided password with the stored one
             if (results.first())
             {
                 String storedPassword = results.getString(myPassField);
-                MessageDigest md = MessageDigest.getInstance(this.MD5);
-                md.reset();
-                byte[] passBytes = password.getBytes();
-                md.update(passBytes);
-                String encryptedPassword = md.toString();
+                /*
+                 * Crypt the password using the UNIX Crypt function.  This is
+                 * to support the Bugzilla authentication scheme.  Recommend
+                 * this be modularlized to fit different encryption schemes.
+                 */
+                String salt = storedPassword.substring(0, 2);
+                String encryptedPassword = JCrypt.crypt(salt, password.trim());
+                LOGGER.fine("Encrypted Password: " + encryptedPassword);
+                LOGGER.fine("Stored Password: " + storedPassword);
                 if (!storedPassword.equals(encryptedPassword))
                 {
                     LOGGER.warning("MySQLSecurity: Invalid Username or Password");
@@ -158,8 +163,11 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
                 else
                 {
                     // Password is valid.  Build UserDetail
+                    Set<GrantedAuthority> groups = new HashSet<GrantedAuthority>();
+                    groups.add(SecurityRealm.AUTHENTICATED_AUTHORITY);
                     userDetails = new MySQLUserDetail(username, encryptedPassword,
-                            true, true, true, true, null);
+                            true, true, true, true,
+                            groups.toArray(new GrantedAuthority[groups.size()]));
                 }
             }
             else
@@ -233,8 +241,11 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
             if (results.first())
             {
                 // Build the user detail
-                user = new MySQLUserDetail(username, "",
-                            true, true, true, true, null);
+                Set<GrantedAuthority> groups = new HashSet<GrantedAuthority>();
+                groups.add(SecurityRealm.AUTHENTICATED_AUTHORITY);
+                user = new MySQLUserDetail(username, results.getString(myPassField),
+                            true, true, true, true, 
+                            groups.toArray(new GrantedAuthority[groups.size()]));
             }
             else
             {
@@ -276,7 +287,8 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
     public GroupDetails loadGroupByGroupname(String groupname)
             throws UsernameNotFoundException, DataAccessException
     {
-        throw new UsernameNotFoundException("Non-supported function");
+        LOGGER.warning("ERROR: Group lookup is not supported.");
+        throw new UsernameNotFoundException("MySQLSecurityRealm: Non-supported function");
     }
 
     class Authenticator extends AbstractUserDetailsAuthenticationProvider

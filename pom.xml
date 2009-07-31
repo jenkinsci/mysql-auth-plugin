@@ -4,7 +4,7 @@
   <groupId>org.jvnet.hudson.plugins</groupId>
   <artifactId>mysql-auth</artifactId>
   <packaging>hpi</packaging>
-  <version>0.9.1</version>
+  <version>0.9.2</version>
   <name>Hudson MySQL Plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/MySQL+Authentication+Plugin</url>
 
