@@ -31,7 +31,7 @@ package hudson.plugins.mysql;
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.Descriptor;
-import hudson.plugins.mysql.crypt.JCrypt;
+import hudson.plugins.mysql.crypt.Cipher;
 import hudson.security.AbstractPasswordBasedSecurityRealm;
 import hudson.security.GroupDetails;
 import hudson.security.SecurityRealm;
@@ -63,7 +63,7 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
     @DataBoundConstructor
     public MySQLSecurityRealm(String myServer, String myUsername, String myPassword,
             String myPort, String myDatabase, String myDataTable, String myUserField,
-            String myPassField, String myCondition)
+            String myPassField, String myCondition, String encryption)
     {
         this.myServer = Util.fixEmptyAndTrim(myServer);
         this.myUsername = Util.fixEmptyAndTrim(myUsername);
@@ -77,10 +77,12 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
         this.myDataTable = Util.fixEmptyAndTrim(myDataTable);
         this.myUserField = Util.fixEmptyAndTrim(myUserField);
         this.myPassField = Util.fixEmptyAndTrim(myPassField);
+        this.encryption = encryption;
     }
 
     public static final class DescriptorImpl extends Descriptor<SecurityRealm>
     {
+        @Override
         public String getHelpFile() {
             return "/plugin/hudson-mysql/help/overview.html";
         }
@@ -146,13 +148,17 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
             if (results.first())
             {
                 String storedPassword = results.getString(myPassField);
-                /*
-                 * Crypt the password using the UNIX Crypt function.  This is
-                 * to support the Bugzilla authentication scheme.  Recommend
-                 * this be modularlized to fit different encryption schemes.
-                 */
-                String salt = storedPassword.substring(0, 2);
-                String encryptedPassword = JCrypt.crypt(salt, password.trim());
+                Cipher cipher;
+                if (encryption.equals(Cipher.CRYPT))
+                {
+                    String salt = storedPassword.substring(0, 2);
+                    cipher = new Cipher(encryption, salt);
+                }
+                else
+                {
+                    cipher = new Cipher(encryption);
+                }
+                String encryptedPassword = cipher.encode(password.trim());
                 LOGGER.fine("Encrypted Password: " + encryptedPassword);
                 LOGGER.fine("Stored Password: " + storedPassword);
                 if (!storedPassword.equals(encryptedPassword))
@@ -356,6 +362,11 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
         return myCondition;
     }
 
+    public String getEncryption()
+    {
+        return encryption;
+    }
+
     /**
      * Logger for debugging purposes.
      */
@@ -401,15 +412,8 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
     private String myCondition;
 
     /**
-     * Digest algorithm names from the Java Cruptography Architecture Standard
-     * Algorithm Name Documentation found at the following address:
-     * 
-     * http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html
-     * 
+     * Encryption type used for the password
      */
-    private static final String MD5 = "MD5";
-    private static final String SHA1 = "SHA-1";
-    private static final String SHA256 = "SHA-256";
-    private static final String SHA384 = "SHA-384";
-    private static final String SHA512 = "SHA-512";
+    private String encryption;
+
 }

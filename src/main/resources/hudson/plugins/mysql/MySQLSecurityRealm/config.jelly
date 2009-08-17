@@ -31,9 +31,6 @@
     <f:entry title="${%Server}" help="/plugin/mysql-auth/help/server.html">
         <f:textbox name="authenticator.myServer" value="${instance.myServer}"/>
     </f:entry>
-    <f:entry title="${%Port}" help="/plugin/mysql-auth/help/port.html">
-        <f:textbox name="authenticator.myPort" value="${instance.myPort}"/>
-    </f:entry>
     <f:entry title="${%Database}" help="/plugin/mysql-auth/help/database.html">
         <f:textbox name="authenticator.myDatabase" value="${instance.myDatabase}"/>
     </f:entry>
@@ -52,7 +49,40 @@
     <f:entry title="${%PassField}" help="/plugin/mysql-auth/help/passField.html">
         <f:textbox name="authenticator.myPassField" value="${instance.myPassField}"/>
     </f:entry>
-    <f:entry title="${%Condition}" help="/plugin/mysql-auth/help/condition.html">
-        <f:textbox name="authenticator.myCondition" value="${instance.myCondition}"/>
-    </f:entry>
+    <f:advanced>
+        <f:entry title="${%EncryptionMethod}"
+                 help="/plugin/mysql-auth/help/encryption.html">
+            <br />
+            <f:radio name="authenticator.encryption" value="MD5" id="auth.md5"
+                     checked="${instance.encryption == 'MD5'}"/>
+            <label for="auth.md5">${%MD5}</label>
+            <br />
+            <f:radio name="authenticator.encryption" value="SHA-1" id="auth.sha1"
+                     checked="${instance.encryption == 'SHA-1'}"/>
+            <label for="auth.md5">${%SHA1}</label>
+            <br />
+            <f:radio name="authenticator.encryption" value="SHA-256" id="auth.sha256"
+                     checked="${instance.encryption == 'SHA-256'}"/>
+            <label for="auth.md5">${%SHA256}</label>
+            <br />
+            <f:radio name="authenticator.encryption" value="SHA-384" id="auth.sha384"
+                     checked="${instance.encryption == 'SHA-384'}"/>
+            <label for="auth.md5">${%SHA384}</label>
+            <br />
+            <f:radio name="authenticator.encryption" value="SHA-512" id="auth.sha512"
+                     checked="${instance.encryption == 'SHA-512'}"/>
+            <label for="auth.md5">${%SHA512}</label>
+            <br />
+            <f:radio name="authenticator.encryption" value="Crypt" id="auth.crypt"
+                     checked="${instance.encryption == 'Crypt'}"/>
+            <label for="auth.crypt">${%Crypt}</label>
+            <br />
+        </f:entry>
+        <f:entry title="${%Port}" help="/plugin/mysql-auth/help/port.html">
+            <f:textbox name="authenticator.myPort" value="${instance.myPort}"/>
+        </f:entry>
+       <f:entry title="${%Condition}" help="/plugin/mysql-auth/help/condition.html">
+            <f:textbox name="authenticator.myCondition" value="${instance.myCondition}"/>
+        </f:entry>
+    </f:advanced>
 </j:jelly>
