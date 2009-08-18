@@ -10,7 +10,7 @@
   <groupId>org.jvnet.hudson.plugins</groupId>
   <artifactId>mysql-auth</artifactId>
   <packaging>hpi</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>Hudson MySQL Plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/MySQL+Authentication+Plugin</url>
 
@@ -28,7 +28,6 @@
         <scope>test</scope>
     </dependency>
   </dependencies>
-  
 
   <scm>
     <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/mysql-auth-1.0</connection>
