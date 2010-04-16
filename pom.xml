@@ -3,16 +3,23 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.320</version>
+    <version>1.324</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   
   <groupId>org.jvnet.hudson.plugins</groupId>
   <artifactId>mysql-auth</artifactId>
   <packaging>hpi</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <name>Hudson MySQL Plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/MySQL+Authentication+Plugin</url>
+
+  <developers>
+    <developer>
+      <id>darkhonor</id>
+      <name>Alex Ackerman</name>
+    </developer>
+  </developers>
 
   <dependencies>
     <dependency>

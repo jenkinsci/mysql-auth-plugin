@@ -84,12 +84,12 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
     {
         @Override
         public String getHelpFile() {
-            return "/plugin/hudson-mysql/help/overview.html";
+            return "/plugin/mysql-auth/help/overview.html";
         }
         
         @Override
         public String getDisplayName() {
-            return "MySQL";
+            return Messages.DisplayName();
         }
     }
 
