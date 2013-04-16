@@ -13,7 +13,7 @@ public class CipherTest extends HudsonTestCase {
 	@Test
 	public void testSHACipher() throws Exception {
         Cipher c = new Cipher("SHA-1");
-		String titi = c.encode("toto");
-		assertSame("titi", titi);
+		String cipheredPassword = c.encode("test");
+		assertEquals("a94a8fe5ccb19ba61c4c0873d391e987982fbbd3", cipheredPassword);
 	}
 }

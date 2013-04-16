@@ -79,7 +79,12 @@ public class Cipher
                 md.reset();
                 byte[] textBytes = plaintext.getBytes();
                 md.update(textBytes);
-                return md.toString();
+                byte[] mdp = md.digest();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < mdp.length; ++i) {
+                    sb.append(String.format("%02x", mdp[i]));
+                }
+                return sb.toString();
             }
             catch (NoSuchAlgorithmException ex)
             {
