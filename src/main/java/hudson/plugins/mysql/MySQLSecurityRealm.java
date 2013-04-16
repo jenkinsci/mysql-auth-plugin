@@ -118,8 +118,7 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
 
         String connectionString;
 
-        connectionString = "jdbc:mysql://" + myServer + "/" +
-                myDatabase;
+        connectionString = "jdbc:mysql://" + myServer + ":" + myPort + "/" + myDatabase;
         LOGGER.fine("MySQLSecurity: Connection String - " + connectionString);
         Connection conn = null;
         try
