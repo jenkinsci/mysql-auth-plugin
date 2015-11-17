@@ -79,13 +79,26 @@ public class Cipher
                 md.reset();
                 byte[] textBytes = plaintext.getBytes();
                 md.update(textBytes);
-                return md.toString();
+                return byteToString(md.digest());
             }
             catch (NoSuchAlgorithmException ex)
             {
                 throw new EncryptionException();
             }
         }
+    }
+
+    private static String byteToString(byte[] digest) {
+        StringBuilder buf = new StringBuilder();
+        for (int i = 0; i < digest.length; i++) {
+            String tempStr = Integer.toHexString(digest[i] & 0xff);
+            if (tempStr.length() == 1) {
+                buf.append("0").append(tempStr);
+            } else {
+                buf.append(tempStr);
+            }
+        }
+        return buf.toString().toLowerCase();
     }
 
     private String encryptionMethod;
