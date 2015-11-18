@@ -1,40 +1,47 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jvnet.hudson.plugins</groupId>
+        <artifactId>plugin</artifactId>
+        <version>1.324</version>
+    </parent>
+
     <groupId>org.jvnet.hudson.plugins</groupId>
-    <artifactId>plugin</artifactId>
-    <version>1.324</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
-  
-  <groupId>org.jvnet.hudson.plugins</groupId>
-  <artifactId>mysql-auth</artifactId>
-  <packaging>hpi</packaging>
-  <version>1.1-SNAPSHOT</version>
-  <name>Hudson MySQL Plugin</name>
-  <url>http://wiki.hudson-ci.org/display/HUDSON/MySQL+Authentication+Plugin</url>
+    <artifactId>mysql-auth</artifactId>
+    <packaging>hpi</packaging>
+    <version>1.1-SNAPSHOT</version>
+    <name>Hudson MySQL Plugin</name>
+    <url>http://wiki.hudson-ci.org/display/HUDSON/MySQL+Authentication+Plugin</url>
 
-  <developers>
-    <developer>
-      <id>darkhonor</id>
-      <name>Alex Ackerman</name>
-    </developer>
-  </developers>
+    <developers>
+        <developer>
+            <id>darkhonor</id>
+            <name>Alex Ackerman</name>
+        </developer>
+    </developers>
 
-  <dependencies>
-    <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>5.1.6</version>
-        <scope>provided</scope>
-    </dependency>
-    <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.6</version>
-        <scope>test</scope>
-    </dependency>
-  </dependencies>
+    <contributors>
+        <contributor>
+            <name>cuizhouwei</name>
+            <email>troy.cui@gmail.com</email>
+        </contributor>
+    </contributors>
+
+    <dependencies>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.6</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <repositories>
         <repository>
