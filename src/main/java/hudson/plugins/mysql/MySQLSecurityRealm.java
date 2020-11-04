@@ -159,8 +159,7 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
                 }
                 if(!cipher.checkPassword(password, storedPassword))
                 {
-                    LOGGER.warning("MySQLSecurity: Invalid Username or Password");
-                    throw new MySQLAuthenticationException("Invalid Username or Password");
+                    LOGGER.warning("MySQLSecurity: Invalid Username or Password (" + username + ")");
                 }
                 else
                 {
@@ -174,7 +173,7 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
             }
             else
             {
-                LOGGER.warning("MySQLSecurity: Invalid Username or Password");
+                LOGGER.warning("MySQLSecurity: Invalid Username or Password (" + username + ")");
             }
 
         }
@@ -253,8 +252,7 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
             }
             else
             {
-                LOGGER.warning("MySQLSecurity: Invalid Username or Password");
-                throw new UsernameNotFoundException("MySQL: User not found");
+                LOGGER.warning("MySQLSecurity: Invalid Username or Password (" + username + ")");
             }
 
         }
@@ -276,6 +274,10 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
                     /** Ignore any errors **/
                 }
             }
+        }
+        if ( user == null )
+        {
+            throw new UsernameNotFoundException("MySQL: User not found");
         }
         return user;
     }
