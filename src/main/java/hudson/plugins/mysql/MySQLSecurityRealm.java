@@ -157,10 +157,7 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
                 {
                     cipher = new Cipher(encryption);
                 }
-                String encryptedPassword = cipher.encode(password.trim());
-                LOGGER.fine("Encrypted Password: " + encryptedPassword);
-                LOGGER.fine("Stored Password: " + storedPassword);
-                if (!storedPassword.equals(encryptedPassword))
+                if(!cipher.checkPassword(password, storedPassword))
                 {
                     LOGGER.warning("MySQLSecurity: Invalid Username or Password");
                     throw new MySQLAuthenticationException("Invalid Username or Password");
@@ -170,7 +167,7 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
                     // Password is valid.  Build UserDetail
                     Set<GrantedAuthority> groups = new HashSet<GrantedAuthority>();
                     groups.add(SecurityRealm.AUTHENTICATED_AUTHORITY);
-                    userDetails = new MySQLUserDetail(username, encryptedPassword,
+                    userDetails = new MySQLUserDetail(username, storedPassword,
                             true, true, true, true,
                             groups.toArray(new GrantedAuthority[groups.size()]));
                 }
@@ -178,13 +175,12 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
             else
             {
                 LOGGER.warning("MySQLSecurity: Invalid Username or Password");
-                throw new MySQLAuthenticationException("Invalid Username or Password");
             }
 
         }
         catch (Exception e)
         {
-            LOGGER.warning("MySQLSecurity Realm Error: " + e.getLocalizedMessage());
+            LOGGER.warning("MySQLSecurity Realm Error: " + e.getLocalizedMessage() + "\n" + e);
         }
         finally
         {
@@ -200,6 +196,9 @@ public class MySQLSecurityRealm extends AbstractPasswordBasedSecurityRealm
                     /** Ignore any errors **/
                 }
             }
+        }
+        if (userDetails == null ) {
+            throw new MySQLAuthenticationException("Invalid Username or Password");
         }
 
         return userDetails;

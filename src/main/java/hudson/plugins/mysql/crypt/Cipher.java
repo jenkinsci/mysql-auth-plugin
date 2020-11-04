@@ -28,8 +28,12 @@
  */
 package hudson.plugins.mysql.crypt;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
+import hudson.plugins.mysql.MySQLSecurityRealm;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Logger;
 
 /**
  * This class produces an encrypted string based upon the selected cipher or
@@ -52,6 +56,7 @@ public class Cipher
     public static final String SHA384 = "SHA-384";
     public static final String SHA512 = "SHA-512";
     public static final String CRYPT = "Crypt";
+    public static final String BCRYPT = "BCrypt";
 
     public Cipher(String type)
     {
@@ -67,6 +72,7 @@ public class Cipher
 
     public String encode(String plaintext) throws EncryptionException
     {
+        if ( plaintext == null ) return null;
         if ((salt != null) || encryptionMethod.equals(this.CRYPT))
         {
             return JCrypt.crypt(salt, plaintext);
@@ -93,6 +99,28 @@ public class Cipher
         }
     }
 
+    public boolean checkPassword(String password, String storedPassword) throws EncryptionException
+    {
+        if ( encryptionMethod.equals(this.BCRYPT))
+        {
+            BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), storedPassword);
+            return result.verified == true;
+        }
+        else
+        {
+            String encryptedPassword = encode(password.trim());
+            LOGGER.fine("Encrypted Password: " + encryptedPassword);
+            LOGGER.fine("Stored Password: " + storedPassword);
+            return storedPassword.equals(encryptedPassword);
+        }
+    }
+
     private String encryptionMethod;
     private String salt;
+
+    /**
+     * Logger for debugging purposes.
+     */
+    private static final Logger LOGGER =
+            Logger.getLogger(Cipher.class.getName());
 }
