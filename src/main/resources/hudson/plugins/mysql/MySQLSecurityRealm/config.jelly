@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <!--
  The person or persons who have associated work with this document (the
  "Dedicator" or "Certifier") hereby either (a) certifies that, to the best of
@@ -55,27 +56,31 @@
             <br />
             <f:radio name="authenticator.encryption" value="MD5" id="auth.md5"
                      checked="${instance.encryption == 'MD5'}"/>
-            <label for="auth.md5">${%MD5}</label>
+            <label class="attach-previous">${%MD5}</label>
             <br />
             <f:radio name="authenticator.encryption" value="SHA-1" id="auth.sha1"
                      checked="${instance.encryption == 'SHA-1'}"/>
-            <label for="auth.md5">${%SHA1}</label>
+            <label class="attach-previous">${%SHA1}</label>
             <br />
             <f:radio name="authenticator.encryption" value="SHA-256" id="auth.sha256"
                      checked="${instance.encryption == 'SHA-256'}"/>
-            <label for="auth.md5">${%SHA256}</label>
+            <label class="attach-previous">${%SHA256}</label>
             <br />
             <f:radio name="authenticator.encryption" value="SHA-384" id="auth.sha384"
                      checked="${instance.encryption == 'SHA-384'}"/>
-            <label for="auth.md5">${%SHA384}</label>
+            <label class="attach-previous">${%SHA384}</label>
             <br />
             <f:radio name="authenticator.encryption" value="SHA-512" id="auth.sha512"
                      checked="${instance.encryption == 'SHA-512'}"/>
-            <label for="auth.md5">${%SHA512}</label>
+            <label class="attach-previous">${%SHA512}</label>
             <br />
             <f:radio name="authenticator.encryption" value="Crypt" id="auth.crypt"
                      checked="${instance.encryption == 'Crypt'}"/>
-            <label for="auth.crypt">${%Crypt}</label>
+            <label class="attach-previous">${%Crypt}</label>
+            <br />
+            <f:radio name="authenticator.encryption" value="BCrypt" id="auth.bcrypt"
+                     checked="${instance.encryption == 'BCrypt'}"/>
+            <label class="attach-previous">${%BCrypt}</label>
             <br />
         </f:entry>
         <f:entry title="${%Port}" help="/plugin/mysql-auth/help/port.html">
